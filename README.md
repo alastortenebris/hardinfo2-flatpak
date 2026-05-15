@@ -4,3 +4,4 @@ What doesn't work:
 - hardinfo2.service
 - dmidecode
 - The boot log
+- Details on kernel modules
