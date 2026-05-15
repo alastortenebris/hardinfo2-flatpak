@@ -1,7 +1,7 @@
 id: org.hardinfo2.hardinfo2
-runtime: org.kde.Platform
-runtime-version: '5.15-25.08'
-sdk: org.kde.Sdk
+runtime: org.gnome.Platform
+runtime-version: '50'
+sdk: org.gnome.Sdk
 command: hardinfo2
 finish-args:
   - --share=ipc
@@ -13,7 +13,62 @@ finish-args:
   - --talk-name=ca.desrt.dconf
   - --env=DCONF_USER_CONFIG_DIR=.config/dconf
   - --device=dri
+  - --talk-name=org.freedesktop.Flatpak
+  - '--system-talk-name=org.freedesktop.UDisks2'
+  - '--system-talk-name=org.freedesktop.fwupd'
 modules:
+   - name: qt5-qtbase
+     buildsystem: simple
+     build-commands:
+      - ./configure -prefix /app -nomake tests -confirm-license -optimize-size -shared -no-dbus -no-rpath -nomake examples -openssl-linked -system-sqlite -no-mimetype-database -system-harfbuzz -optimized-qmake
+      - make CFLAGS="${CFLAGS}" LDFLAGS="${LDFLAGS}"
+      - make install        
+     sources:
+      - type: git
+        url: 'https://invent.kde.org/qt/qt/qtbase.git'
+        tag: v5.15.18-lts-lgpl
+   - name: kmod
+     buildsystem: meson
+     config-opts:
+      - -Dbuild-tests=false
+      - -Dmanpages=false
+      - -Dopenssl=disabled
+      - -Dxz=disabled
+      - -Dzlib=disabled
+      - -Dzstd=disabled
+      - -Dbashcompletiondir=no
+      - --sbindir=/app/bin
+     sources:
+      - type: git
+        url: 'https://git.kernel.org/pub/scm/utils/kernel/kmod/kmod.git'
+        tag: v34.2
+   - name: vulkan-headers
+     buildsystem: cmake-ninja
+     sources:
+      - type: archive
+        url: https://github.com/KhronosGroup/Vulkan-Headers/archive/v1.4.347/Vulkan-Headers-v1.4.347.tar.gz
+        sha256: 6611f09ed95aaf2c47ad76df9fb3e5455ce52d1ed3d0ef5dbc0d63e3208d3faa
+   - name: vulkan-tools
+     buildsystem: cmake-ninja
+     config-opts:
+      - -DGLSLANG_INSTALL_DIR=/app
+      - -DVULKAN_HEADERS_INSTALL_DIR=/app
+      - -DCMAKE_BUILD_TYPE=Release
+     sources:
+      - type: archive
+        url: https://github.com/KhronosGroup/Vulkan-Tools/archive/v1.4.347/Vulkan-Tools-1.4.347.tar.gz
+        sha256: 4ed73bd973069633ef2b830c7b9f3ebcb7bc8aaac5783b9e5aa36c888e687a78
+   - name: xrandr
+     buildsystem: simple
+     sources:
+      - type: archive
+        url: https://www.x.org/archive/individual/app/xrandr-1.5.4.tar.xz
+        sha256: 2cafccb2aaf2491a4068676117a0d4f90ab307724b96fffc54cd1da953779400
+     build-commands:
+      - ./configure --prefix=/app
+      - make prefix=/app CFLAGS="${CFLAGS}" LDFLAGS="${LDFLAGS}"
+      - make prefix=/app install
+        
    - name: libglu
      buildsystem: meson
      sources:
@@ -37,7 +92,7 @@ modules:
      build-commands:
       - sed -i "s:sbin:bin:g" Makefile
       - make prefix=/app CFLAGS="${CFLAGS}" LDFLAGS="${LDFLAGS}"
-      - make prefix=/app install
+      - make prefix=/app install-bin
    - name: hardinfo2
      buildsystem: cmake
      config-opts:
