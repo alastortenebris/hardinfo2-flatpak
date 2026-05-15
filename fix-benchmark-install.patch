@@ -1,0 +1,26 @@
+diff --git a/deps/qgears2/CMakeLists.txt b/deps/qgears2/CMakeLists.txt
+index c9ae6980..4bb70d59 100644
+--- a/deps/qgears2/CMakeLists.txt
++++ b/deps/qgears2/CMakeLists.txt
+@@ -102,7 +102,7 @@ target_link_libraries(qgears2
+ )
+ endif()
+ 
+-install(FILES ${CMAKE_BINARY_DIR}/deps/qgears2/qgears2 DESTINATION ${CMAKE_INSTALL_LIBDIR}/hardinfo2/modules
++install(TARGETS qgears2 RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR}/hardinfo2/modules
+ 	PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+ )
+       
+diff --git a/deps/vkgears/CMakeLists.txt b/deps/vkgears/CMakeLists.txt
+index d4d050f6..7d582489 100644
+--- a/deps/vkgears/CMakeLists.txt
++++ b/deps/vkgears/CMakeLists.txt
+@@ -68,7 +68,7 @@ add_executable(vkgears vkgears.c matrix.c wsi/wsi.c ${WAYLAND_SOURCE} ${X11_SOUR
+ target_link_libraries(vkgears ${Vulkan_LIBRARIES} ${EXTRA_LIBS} ${LIBDECOR_LIBRARY} ${WAYLAND_CLIENT_LIBRARY} ${XCB_LIBRARY})
+ #${XKBCOMMON_LIBRARY} ${XKBCOMMONX11_LIBRARY}
+ 
+-install(FILES ${CMAKE_BINARY_DIR}/deps/vkgears/vkgears DESTINATION ${CMAKE_INSTALL_LIBDIR}/hardinfo2/modules
++install(TARGETS vkgears RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR}/hardinfo2/modules
+            PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+        )
+ 
